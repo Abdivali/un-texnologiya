@@ -1,0 +1,96 @@
+# APK ni GitHub serverlarida yig'ish — kompyuteringizga hech narsa o'rnatish shart emas.
+# Har "push" da yoki Actions bo'limidagi "Run workflow" tugmasi bosilganda ishga tushadi.
+
+name: APK yig'ish
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodni olish
+        uses: actions/checkout@v4
+
+      - name: Java o'rnatish
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Flutter o'rnatish
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Platforma papkalarini yaratish
+        run: flutter create . --platforms=android,web --org uz.qarshidtu --project-name un_texnologiya
+
+      - name: Paketlarni yuklash
+        run: flutter pub get
+
+      - name: Statik tahlil (xato bo'lsa ham davom etadi)
+        run: flutter analyze || true
+
+      - name: Testlar (xato bo'lsa ham davom etadi)
+        run: flutter test || true
+
+      - name: APK yig'ish
+        run: flutter build apk --release
+
+      - name: Web versiyani yig'ish
+        run: flutter build web --release --base-href "/${{ github.event.repository.name }}/"
+
+      - name: APK ni artefakt sifatida saqlash
+        uses: actions/upload-artifact@v4
+        with:
+          name: un-texnologiya-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Web papkasini artefakt sifatida saqlash
+        uses: actions/upload-artifact@v4
+        with:
+          name: un-texnologiya-web
+          path: build/web
+
+      # Ommaviy yuklab olish havolasi — talabalarga aynan shu havolani berasiz
+      - name: Release yaratish va APK ni biriktirish
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: "Un texnologiyasi v1.0.${{ github.run_number }}"
+          body: |
+            Un ishlab chiqarish texnologiyasi — mobil ilova.
+
+            **O'rnatish:** quyidagi `app-release.apk` faylini telefonga yuklab oling va oching.
+            Android "Noma'lum manbadan o'rnatish" ruxsatini so'rasa — ruxsat bering.
+          files: build/app/outputs/flutter-apk/app-release.apk
+
+  # Web versiyani GitHub Pages ga chiqarish (Settings → Pages → Source: GitHub Actions bo'lsa ishlaydi)
+  pages:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: un-texnologiya-web
+          path: web
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - id: deploy
+        uses: actions/deploy-pages@v4
