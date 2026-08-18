@@ -28,17 +28,18 @@ class HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
-    final pages = const [
-      DashboardScreen(),
-      TrajectoryScreen(),
-      ModulesScreen(),
-      ResultsScreen(),
-      ProfileScreen(),
-    ];
-
+    // DIQQAT: bu ro'yxat `const` bo'lmasligi kerak — aks holda Flutter bir xil
+    // vidjet nusxasini ko'rib, ekranlarni qayta qurmaydi va progress yangilanmaydi.
     return AnimatedBuilder(
       animation: appState,
       builder: (context, _) {
+        final pages = <Widget>[
+          const DashboardScreen(),
+          const TrajectoryScreen(),
+          const ModulesScreen(),
+          const ResultsScreen(),
+          const ProfileScreen(),
+        ];
         return Scaffold(
           body: IndexedStack(index: _index, children: pages),
           bottomNavigationBar: NavigationBar(

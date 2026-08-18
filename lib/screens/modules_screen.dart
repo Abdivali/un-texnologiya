@@ -18,6 +18,14 @@ class _ModulesScreenState extends State<ModulesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Holat o'zgarganda ekran darhol qayta chiziladi (real-time yangilanish).
+    return AnimatedBuilder(
+      animation: appState,
+      builder: (context, _) => _buildBody(context),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
     final s = appState;
     final all = s.content?.modules ?? const <LearningModule>[];
     final filtered = _query.trim().isEmpty
@@ -161,6 +169,13 @@ class _ModuleCard extends StatelessWidget {
                           icon: Icons.quiz_outlined,
                           text: '${module.tests.length} test',
                         ),
+                        if (module.images.isNotEmpty) ...[
+                          const SizedBox(width: 8),
+                          _Chip(
+                            icon: Icons.image_outlined,
+                            text: '${module.images.length}',
+                          ),
+                        ],
                         if (best != null) ...[
                           const SizedBox(width: 8),
                           _Chip(

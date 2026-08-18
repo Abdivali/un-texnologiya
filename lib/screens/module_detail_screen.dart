@@ -4,6 +4,7 @@ import '../models.dart';
 import '../store.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/image_view.dart';
 import 'stage_router.dart';
 
 /// Modul tarkibi — nazariy material, interaktiv topshiriq, virtual laboratoriya,
@@ -102,6 +103,10 @@ class ModuleDetailScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              if (module.images.isNotEmpty) ...[
+                const SizedBox(height: 18),
+                ModuleGallery(images: module.images),
+              ],
               const SizedBox(height: 16),
               const SectionTitle('Modul bosqichlari'),
               ...module.stageKeys.map(
@@ -167,6 +172,8 @@ class _StageTile extends StatelessWidget {
     switch (stage) {
       case 'theory':
         return '${module.sections.length} ta bo‘lim · qo‘llanma matni';
+      case 'practice':
+        return '${module.practice?.steps.length ?? 0} ta bosqich · ${module.practice?.duration ?? ''}';
       case 'interactive':
         return '${module.interactive.length} ta topshiriq';
       case 'vlab':

@@ -12,6 +12,14 @@ class ResultsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Holat o'zgarganda ekran darhol qayta chiziladi (real-time yangilanish).
+    return AnimatedBuilder(
+      animation: appState,
+      builder: (context, _) => _buildBody(context),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
     final s = appState;
     final modules = s.content?.modules ?? const <LearningModule>[];
     final tested = modules.where((m) => s.bestScore(m.id) != null).toList();
@@ -190,6 +198,7 @@ class ResultsScreen extends StatelessWidget {
                   const kindNames = {
                     'test': 'Test',
                     'vlab': 'Virtual laboratoriya',
+                    'practice': 'Amaliy mashg‘ulot',
                     'interactive': 'Interaktiv topshiriq',
                     'diagnostic': 'Diagnostika',
                   };

@@ -4,6 +4,7 @@ import '../models.dart';
 import '../store.dart';
 import '../theme.dart';
 import '../widgets/common.dart';
+import '../widgets/image_view.dart';
 
 /// 4-bosqich: Nazariy material — qo'llanma matni bo'limlar ko'rinishida.
 class TheoryScreen extends StatefulWidget {
@@ -66,6 +67,10 @@ class _TheoryScreenState extends State<TheoryScreen> {
             ),
           ),
           const SizedBox(height: 18),
+          if (m.images.isNotEmpty) ...[
+            ModuleGallery(images: m.images, title: 'Mavzu bo‘yicha rasmlar'),
+            const SizedBox(height: 18),
+          ],
           ...m.sections.map(
             (s) => Padding(
               padding: const EdgeInsets.only(bottom: 14),
@@ -163,10 +168,9 @@ class _SectionCardState extends State<_SectionCard> {
                 children: paragraphs
                     .map(
                       (p) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.only(bottom: 11),
                         child: Text(
                           p,
-                          textAlign: TextAlign.justify,
                           style: TextStyle(
                             fontSize: widget.fontSize,
                             height: 1.6,

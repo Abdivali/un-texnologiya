@@ -230,6 +230,8 @@ IconData stageIcon(String stage) {
   switch (stage) {
     case 'theory':
       return Icons.menu_book_outlined;
+    case 'practice':
+      return Icons.biotech_outlined;
     case 'interactive':
       return Icons.extension_outlined;
     case 'vlab':

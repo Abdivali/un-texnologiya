@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models.dart';
 import 'interactive_screen.dart';
 import 'lab_protocol_screen.dart';
+import 'practice_screen.dart';
 import 'test_screen.dart';
 import 'theory_screen.dart';
 import 'virtual_lab_screen.dart';
@@ -17,6 +18,9 @@ Future<void> openStage(
   switch (stage) {
     case 'theory':
       page = TheoryScreen(module: module);
+      break;
+    case 'practice':
+      page = PracticeScreen(module: module);
       break;
     case 'interactive':
       page = InteractiveScreen(module: module);

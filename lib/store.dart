@@ -331,6 +331,18 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Faqat testlar uchun: holatni tozalash (prefs ga tegmaydi).
+  @visibleForTesting
+  Future<void> resetAllForTest() async {
+    _doneStages.clear();
+    attempts.clear();
+    protocols.clear();
+    name = '';
+    group = '';
+    startLevel = 0;
+    diagnosticDone = false;
+  }
+
   static String today() {
     final n = DateTime.now();
     final m = n.month.toString().padLeft(2, '0');
@@ -344,6 +356,7 @@ final appState = AppState();
 
 const stageLabels = <String, String>{
   'theory': 'Nazariy material',
+  'practice': 'Amaliy mashg‘ulot',
   'interactive': 'Interaktiv topshiriq',
   'vlab': 'Virtual laboratoriya',
   'protocol': 'Laboratoriya ishi',

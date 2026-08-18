@@ -239,6 +239,96 @@ class VLabItem {
       );
 }
 
+
+/// Modul rasmi (qo'llanmadan ajratilgan).
+class ModuleImage {
+  final String src;
+  final String caption;
+  final String role; // theory | equip | practice | poster
+
+  ModuleImage({required this.src, required this.caption, required this.role});
+
+  factory ModuleImage.fromJson(Map<String, dynamic> j) => ModuleImage(
+        src: (j['src'] ?? '').toString(),
+        caption: (j['cap'] ?? '').toString(),
+        role: (j['role'] ?? 'theory').toString(),
+      );
+
+  String get roleLabel {
+    switch (role) {
+      case 'equip':
+        return 'Asbob-uskuna';
+      case 'practice':
+        return 'Amaliyot';
+      case 'poster':
+        return 'Plakat';
+      default:
+        return 'Nazariya';
+    }
+  }
+}
+
+/// Amaliy mashg'ulot bosqichi.
+class PracticeStep {
+  final String title;
+  final String description;
+  final String tip;
+  final String? image;
+
+  PracticeStep({
+    required this.title,
+    required this.description,
+    required this.tip,
+    this.image,
+  });
+
+  factory PracticeStep.fromJson(Map<String, dynamic> j) => PracticeStep(
+        title: (j['t'] ?? '').toString(),
+        description: (j['d'] ?? '').toString(),
+        tip: (j['tip'] ?? '').toString(),
+        image: j['img'] == null ? null : j['img'].toString(),
+      );
+}
+
+/// Amaliy mashg'ulot — laboratoriyada qo'lda bajariladigan ish.
+class PracticeSession {
+  final String title;
+  final String goal;
+  final String duration;
+  final List<String> equipment;
+  final List<String> safety;
+  final List<PracticeStep> steps;
+  final List<String> record;
+  final List<String> criteria;
+
+  PracticeSession({
+    required this.title,
+    required this.goal,
+    required this.duration,
+    required this.equipment,
+    required this.safety,
+    required this.steps,
+    required this.record,
+    required this.criteria,
+  });
+
+  static List<String> _strs(dynamic v) =>
+      (v as List<dynamic>? ?? const []).map((e) => e.toString()).toList();
+
+  factory PracticeSession.fromJson(Map<String, dynamic> j) => PracticeSession(
+        title: (j['title'] ?? 'Amaliy mashg‘ulot').toString(),
+        goal: (j['goal'] ?? '').toString(),
+        duration: (j['duration'] ?? '').toString(),
+        equipment: _strs(j['equipment']),
+        safety: _strs(j['safety']),
+        steps: (j['steps'] as List<dynamic>? ?? const [])
+            .map((e) => PracticeStep.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        record: _strs(j['record']),
+        criteria: _strs(j['criteria']),
+      );
+}
+
 class LearningModule {
   final int id;
   final String title;
@@ -251,6 +341,8 @@ class LearningModule {
   final List<InteractiveTask> interactive;
   final LabProtocol? protocol;
   final VirtualLab? vlab;
+  final List<ModuleImage> images;
+  final PracticeSession? practice;
 
   LearningModule({
     required this.id,
@@ -262,8 +354,10 @@ class LearningModule {
     required this.tests,
     required this.control,
     required this.interactive,
+    required this.images,
     this.protocol,
     this.vlab,
+    this.practice,
   });
 
   factory LearningModule.fromJson(Map<String, dynamic> j) => LearningModule(
@@ -290,11 +384,18 @@ class LearningModule {
         vlab: j['vlab'] == null
             ? null
             : VirtualLab.fromJson(j['vlab'] as Map<String, dynamic>),
+        images: (j['images'] as List<dynamic>? ?? const [])
+            .map((e) => ModuleImage.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        practice: j['practice'] == null
+            ? null
+            : PracticeSession.fromJson(j['practice'] as Map<String, dynamic>),
       );
 
   /// Modul ichidagi bosqichlar ro'yxati (traektoriya uchun).
   List<String> get stageKeys {
     final s = <String>['theory'];
+    if (practice != null) s.add('practice');
     if (interactive.isNotEmpty) s.add('interactive');
     if (vlab != null) s.add('vlab');
     if (protocol != null) s.add('protocol');

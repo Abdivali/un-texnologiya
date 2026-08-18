@@ -15,6 +15,14 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Holat o'zgarganda ekran darhol qayta chiziladi (real-time yangilanish).
+    return AnimatedBuilder(
+      animation: appState,
+      builder: (context, _) => _buildBody(context),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
     final s = appState;
     final modules = s.content?.modules ?? const <LearningModule>[];
     final next = s.nextStep;

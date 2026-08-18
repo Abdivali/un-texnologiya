@@ -19,6 +19,8 @@ o'quv qo'llanmadan (Qarshi, 2026, 185 bet) olingan.
 | Hisoblovchi laboratoriya protokoli | 11 ta | qo'llanmadagi formulalar |
 | Virtual laboratoriya simulyatsiyasi | 3 ta | 1, 2, 3-modul |
 | Interaktiv topshiriq | 30 ta | 15 modul × 2 tur |
+| **Amaliy mashg'ulot** | **15 ta (99 bosqich)** | **qo'llanmadagi ish tartibi** |
+| **Rasm** | **112 ta (123 joylashuv)** | **qo'llanmadan ajratilgan** |
 | Diagnostika testi | 12 ta savol | modullar bo'ylab |
 
 ### Ilova ishlash zanjiri
@@ -31,8 +33,11 @@ Diagnostika → Traektoriya → O'rganish → Amaliy mashq → Nazorat → Monit
   ≥45 % → o'rta, aks holda boshlang'ich).
 - **Traektoriya** — daraja modullar to'plamini belgilaydi. Test natijasi 60 % dan past bo'lgan
   modul avtomatik ravishda traektoriya boshiga ko'chiriladi (korreksiya).
-- **Har bir modul** 5 bosqichdan iborat: nazariya → interaktiv topshiriq → virtual laboratoriya
-  → laboratoriya protokoli → test. (Bosqichlar modulda mavjud bo'lganiga qarab.)
+- **Har bir modul** 6 bosqichdan iborat: nazariya → **amaliy mashg'ulot** → interaktiv topshiriq →
+  virtual laboratoriya → laboratoriya protokoli → test. (Bosqichlar modulda mavjud bo'lganiga qarab.)
+- **Amaliy mashg'ulot** — laboratoriyada qo'lda bajariladigan ish: maqsad, asbob-uskuna ro'yxati,
+  xavfsizlik qoidalari (o'qilmaguncha bosqichlar bloklangan), rasm bilan bosqichma-bosqich tartib,
+  ish daftariga qayd etiladigan ma'lumotlar va baholash mezonlari.
 
 ---
 
@@ -75,14 +80,14 @@ flutter analyze                  # statik tahlil
 
 ```bash
 flutter build apk --release
-# natija: build/app/outputs/flutter-apk/app-release.apk  (~20–25 MB)
+# natija: build/app/outputs/flutter-apk/app-release.apk  (rasmlar bilan ~30–34 MB)
 ```
 
 Hajmni kamaytirish kerak bo'lsa, arxitektura bo'yicha bo'lish:
 
 ```bash
 flutter build apk --split-per-abi
-# app-arm64-v8a-release.apk  ~8–10 MB — zamonaviy telefonlarning 95 % i uchun shu yetadi
+# app-arm64-v8a-release.apk  ~17–19 MB — zamonaviy telefonlarning 95 % i uchun shu yetadi
 ```
 
 APK ni Telegram, Google Drive yoki USB orqali talabalarga bering. Telefonda
@@ -106,7 +111,8 @@ APK o'rnatish shart emas.
 un_app/
 ├── pubspec.yaml
 ├── assets/
-│   └── content.json          # butun o'quv kontenti (192 KB)
+│   ├── content.json          # butun o'quv kontenti (~290 KB)
+│   └── images/               # qo'llanmadan ajratilgan 112 ta rasm (~8 MB)
 ├── lib/
 │   ├── main.dart             # kirish nuqtasi, splash, marshrutlash
 │   ├── theme.dart            # ranglar va uslub
@@ -114,6 +120,7 @@ un_app/
 │   ├── store.dart            # holat + shared_preferences (progress, natijalar)
 │   ├── lab_formula.dart      # laboratoriya hisob-kitob formulalari
 │   ├── widgets/common.dart   # ProgressRing, grafik, OptionTile
+│   ├── widgets/image_view.dart # rasm galereyasi va to'liq ekranli ko'ruvchi
 │   └── screens/
 │       ├── onboarding_screen.dart    # kirish
 │       ├── diagnostic_screen.dart    # 1-bosqich: diagnostika
@@ -122,7 +129,8 @@ un_app/
 │       ├── trajectory_screen.dart    # 2-bosqich: traektoriya
 │       ├── modules_screen.dart       # 3-bosqich: modullar
 │       ├── module_detail_screen.dart # modul tarkibi
-│       ├── theory_screen.dart        # 4-bosqich: nazariya
+│       ├── theory_screen.dart        # 4-bosqich: nazariya (rasm galereyasi bilan)
+│       ├── practice_screen.dart      # amaliy mashg'ulot
 │       ├── interactive_screen.dart   # 5-bosqich: interaktiv topshiriq
 │       ├── virtual_lab_screen.dart   # 6-bosqich: virtual laboratoriya
 │       ├── lab_protocol_screen.dart  # 7-bosqich: laboratoriya ishi
@@ -157,8 +165,8 @@ har doim ham yangilamaydi).
 - **O'qituvchi paneli** — hozir natija faqat telefonda. Agar o'qituvchi ko'rishi kerak bo'lsa,
   Supabase (bepul plan) qo'shish kifoya: `store.dart` da saqlash funksiyalariga API chaqiruvi
   qo'shiladi, qolgan kod o'zgarmaydi.
-- **Rasm va videolar** — qo'llanmadagi rasmlar (shuplar, purka, mufel pechi) hozir ilovada yo'q.
-  `assets/images/` papkasiga qo'shib, `content.json` da bo'limga `img` maydonini qo'shish mumkin.
+- **Video** — hozir faqat rasm bor. Har bir amaliy bosqichga qisqa video havolasi qo'shilsa,
+  mustaqil tayyorgarlik yanada samarali bo'ladi.
 - **PDF eksport** — talaba laboratoriya protokolini PDF qilib o'qituvchiga yuborishi
   (`pdf` va `printing` paketlari).
 - **Qolgan 12 modul uchun virtual laboratoriya** — hozir 1, 2, 3-modulda bor;
